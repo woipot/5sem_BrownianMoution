@@ -5,8 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrownianMoution"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Background="Gray">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top" MinHeight="20" MaxHeight="20">
+            <MenuItem Header="File">
+                <MenuItem Header="Save"/>
+            </MenuItem>
+        </Menu>
         
+        <Border Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="2" VerticalAlignment="Stretch" 
+                HorizontalAlignment="Stretch" MinWidth="200" MinHeight="200"
+                Margin="20,20,20,20"
+                Background="White">
+            
+            <Canvas x:Name="MainField">
+                
+            </Canvas>
+        </Border>
+
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,20,20,20" MinWidth="70">
+            <Button Content="Start"/>
+            <Button Content="Stop" Margin="0,20,0,20"/>
+        </StackPanel>
+        
+
+
     </Grid>
+
+
 </Window>
