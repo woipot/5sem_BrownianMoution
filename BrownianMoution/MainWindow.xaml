@@ -4,8 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrownianMoution"
+        xmlns:mvvm="clr-namespace:BrownianMoution.Sources.MVVM"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Background="Gray">
+    <Window.DataContext>
+        <mvvm:MainVM/>
+    </Window.DataContext>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
@@ -29,12 +34,13 @@
             
             <Canvas x:Name="MainField">
                 
+                
             </Canvas>
         </Border>
 
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,20,20,20" MinWidth="70">
-            <Button Content="Start"/>
-            <Button Content="Stop" Margin="0,20,0,20"/>
+            <Button Content="Star" Command="{Binding StartCommand}"/>
+            <Button Content="Stop" Margin="0,20,0,20" Command="{Binding StopCommand}"/>
         </StackPanel>
         
 
