@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+using System.Globalization;
 using System.Windows;
-using System.Xml.Serialization;
+using System.Xml;
 using BrownianMoution.Sources.figures;
-using BrownianMoution.Sources.Interfaces;
 using Microsoft.Practices.Prism.Mvvm;
 
 namespace BrownianMoution.Sources.MVVM.Models
@@ -12,7 +11,7 @@ namespace BrownianMoution.Sources.MVVM.Models
     public class BMoutionState : BindableBase
     {
         private int _height = 400;
-        private int _weight = 670;
+        private int _weidth = 670;
         private readonly ObservableCollection<PhysicCircle> _figureCollection;
 
         public int Height
@@ -25,12 +24,12 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
-        public int Weight
+        public int Weidth
         {
-            get => _weight;
+            get => _weidth;
             set
             {
-                _weight = value; 
+                _weidth = value; 
                 NormolizeWightState();
             }
         }
@@ -69,13 +68,92 @@ namespace BrownianMoution.Sources.MVVM.Models
 
         public void SaveState(string filepatch)
         {
-            
+            var doc = new XmlDocument();
+
+            var xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+
+            doc.AppendChild(xmlDeclaration);
+
+            var root = doc.CreateElement("collection");
+
+            var weightAttr = doc.CreateAttribute("Weidth");
+            weightAttr.InnerText = _weidth.ToString();
+            root.Attributes.Append(weightAttr);
+
+            var heightAttr = doc.CreateAttribute("Height");
+            heightAttr.InnerText = _height.ToString();
+            root.Attributes.Append(heightAttr);
+
+            foreach (var circle in _figureCollection)
+            {
+                var circleNode = doc.CreateElement("Circle");
+
+                AddChildNode("Radius", circle.Radius.ToString(), circleNode, doc);
+                AddChildNode("Mass",   circle.Mass.ToString(), circleNode, doc);
+                AddChildNode("VX", circle.SpeedX.ToString(CultureInfo.InvariantCulture), circleNode, doc);
+                AddChildNode("VY", circle.SpeedY.ToString(CultureInfo.InvariantCulture), circleNode, doc);
+                AddChildNode("X", circle.X.ToString(CultureInfo.InvariantCulture), circleNode, doc);
+                AddChildNode("Y", circle.Y.ToString(CultureInfo.InvariantCulture), circleNode, doc);
+
+                root.AppendChild(circleNode);
+            }
+
+            doc.AppendChild(root);
+
+            doc.Save(filepatch);
+        }
+
+        public void LoadState(string filepatch)
+        {
+            _figureCollection.Clear();
+            var doc = new XmlDocument();
+
+            doc.Load(filepatch);
+
+            var root = doc.DocumentElement;
+
+            if (root == null)
+            {
+
+                return;
+            }
+
+            var weidth = Convert.ToInt32(root.Attributes["Weidth"].InnerText);
+            var height = Convert.ToInt32(root.Attributes["Height"].InnerText);
+
+            Height = height;
+            Weidth = weidth;
+
+            foreach (var child in root.ChildNodes)
+            {
+                var node = child as XmlNode;
+                if (node != null)
+                {
+                    var radius = Convert.ToInt32(node["Radius"].InnerText);
+                    var mass = Convert.ToInt32(node["Mass"].InnerText);
+                    var vx = Convert.ToInt32(node["VX"].InnerText);
+                    var vy = Convert.ToInt32(node["VY"].InnerText);
+                    var x = Convert.ToInt32(node["X"].InnerText);
+                    var y = Convert.ToInt32(node["Y"].InnerText);
+
+                    var loadedFigure = new PhysicCircle(x, y, mass, radius, vx, vy);
+                    _figureCollection.Add(loadedFigure);
+                }
+            }
         }
 
 
+
+        private static void AddChildNode(string childName, string childText, XmlElement parentNode, XmlDocument doc)
+        {
+            var child = doc.CreateElement(childName);
+            child.InnerText = childText;
+            parentNode.AppendChild(child);
+        }
+
         private void DetectAndRunCollision(PhysicCircle verifiableCircle)
         {
-            if (verifiableCircle.X > _weight - verifiableCircle.Radius)
+            if (verifiableCircle.X > _weidth - verifiableCircle.Radius)
             {
                 if (verifiableCircle.Speed.X > 0)
                 {
@@ -188,10 +266,10 @@ namespace BrownianMoution.Sources.MVVM.Models
         {
             foreach (var circle in _figureCollection)
             {
-                var isAfterBorder = circle.X > Weight;
+                var isAfterBorder = circle.X > Weidth;
                 if (isAfterBorder)
                 {
-                    circle.X = Weight - circle.Radius;
+                    circle.X = Weidth - circle.Radius;
                 }
 
             }

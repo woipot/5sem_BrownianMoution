@@ -20,8 +20,6 @@ namespace BrownianMoution.Sources.MVVM
 
         private Ellipse _selectedEllipse;
 
-        private PhysicCircle _selectedCircle;
-
 
         #region Properties
 
@@ -29,8 +27,8 @@ namespace BrownianMoution.Sources.MVVM
 
         public int Weidth
         {
-            get => _moutionModel.Weight;
-            set => _moutionModel.Weight = value;
+            get => _moutionModel.Weidth;
+            set => _moutionModel.Weidth = value;
         }
 
         public int Height
@@ -132,19 +130,31 @@ namespace BrownianMoution.Sources.MVVM
 
         private void SaveInFile()
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = @"brounMoution ini (*.xml)|*.xml";
+            var saveFileDialog = new SaveFileDialog {Filter = @"brounMoution ini (*.xml)|*.xml"};
 
-            if (openFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true)
             {
-                var patch = openFileDialog.FileName;
-
+                var patch = saveFileDialog.FileName;
+                _moutionModel.SaveState(patch);
             }
         }
 
         private void LoadFromFile()
         {
-            
+            var openFileDialog = new OpenFileDialog { Filter = @"brounMoution ini (*.xml)|*.xml" };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var patch = openFileDialog.FileName;
+                try
+                {
+                    _moutionModel.LoadState(patch);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Eror in file : " + e.Message);
+                }
+            }
         }
         #endregion
     }

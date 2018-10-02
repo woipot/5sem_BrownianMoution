@@ -67,6 +67,20 @@ namespace BrownianMoution.Sources.figures
         #endregion
 
 
+        #region Constructors
+
+        public PhysicCircle(double x = 0, double y = 0, int mass = 1, int radius = 15, int speedX = 1, int speedY = 1)
+        {
+            Mass = mass;
+            Radius = radius;
+            X = x;
+            Y = y;
+            Speed = new Vector(speedX, speedY);
+        }
+
+        #endregion
+
+
         #region Public fuctions
 
         public void Move()
@@ -84,14 +98,7 @@ namespace BrownianMoution.Sources.figures
             return result;
         }
 
-        public PhysicCircle(double x = 0, double y = 0, int mass = 1, int radius = 15, int speed = 1)
-        {
-            Mass = mass;
-            Radius = radius;
-            X = x;
-            Y = y;
-            Speed = new Vector(speed, speed);
-        }
+       
 
         #endregion
     }
