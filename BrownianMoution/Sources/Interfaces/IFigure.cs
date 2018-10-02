@@ -1,14 +1,14 @@
-﻿namespace BrownianMoution.Sources.figures
+﻿namespace BrownianMoution.Sources.Interfaces
 {
     public interface IFigure
     {
-        int X
+        double X
         {
             get;
             set;
         }
 
-        int Y
+        double Y
         {
             get;
             set;

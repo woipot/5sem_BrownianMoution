@@ -5,42 +5,141 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BrownianMoution"
         xmlns:mvvm="clr-namespace:BrownianMoution.Sources.MVVM"
+        xmlns:figures="clr-namespace:BrownianMoution.Sources.figures"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Gray">
+        Title="MainWindow" Height="450" Width="800" Background="Gray" BorderBrush="#FF2D2D30" Foreground="#FFABABAB" >
     <Window.DataContext>
         <mvvm:MainVM/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="Background" Value="#FF2D2D30"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
     
-    <Grid>
+    <Grid Background="#FF2D2D30">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0.5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top" MinHeight="20" MaxHeight="20">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top" MinHeight="20" MaxHeight="20" Background="#FF2D2D30" Foreground="#FFDADAE7">
             <MenuItem Header="File">
                 <MenuItem Header="Save"/>
             </MenuItem>
         </Menu>
-        
-        <Border Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="2" VerticalAlignment="Stretch" 
-                HorizontalAlignment="Stretch" MinWidth="200" MinHeight="200"
-                Margin="20,20,20,20"
-                Background="White">
-            
-            <Canvas x:Name="MainField">
-                
-                
-            </Canvas>
-        </Border>
 
-        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,20,20,20" MinWidth="70">
-            <Button Content="Star" Command="{Binding StartCommand}"/>
-            <Button Content="Stop" Margin="0,20,0,20" Command="{Binding StopCommand}"/>
+        <Viewbox  Grid.Column="0" Grid.Row="1">
+            <ItemsControl Height="{Binding Height}" 
+                          Width="{Binding Weidth}" 
+                          BorderThickness="2" BorderBrush="#FF686868"
+                          ItemsSource="{Binding FigureCollection}"
+                          Background="#FF1E1E23">
+                
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction 
+                            Command="{Binding AddCommand}"/>
+                    </i:EventTrigger>
+
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <command:EventToCommand Command="{Binding SelectCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type figures:PhysicCircle}" >
+                        <Ellipse Name="Ellipse"
+                                 Width="{Binding Size}" 
+                                 Height="{Binding Size}"
+                                 Fill="Beige"
+                                 Stroke="Black">
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.Resources>
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="{x:Type ContentPresenter}">
+                        <Setter Property="Canvas.Top"  Value="{Binding Top, Mode=OneWay}"/>
+                        <Setter Property="Canvas.Left" Value="{Binding Left, Mode=OneWay}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+
+
+                <ItemsControl.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </ItemsControl.RenderTransform>
+            </ItemsControl>
+        </Viewbox>
+
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,10,20" MinWidth="80">
+            <Button Content="Start/Stop" Command="{Binding EnableTimer}" Background="#FF686868" Foreground="White" MinHeight="30"/>
+            
+            <StackPanel Margin="0, 20">
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Radius: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.Radius}" HorizontalAlignment="Stretch" Height="15" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Mass: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.Mass}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <Label Content="Speed: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="VX: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.SpeedX}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="VY: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.SpeedY}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <Label Content="Coords: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="X: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.X}" HorizontalAlignment="Stretch" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Y: " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding SelectedCircle.Y}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+            </StackPanel>
         </StackPanel>
         
 
@@ -49,3 +148,18 @@
 
 
 </Window>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

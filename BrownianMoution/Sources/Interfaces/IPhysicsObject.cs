@@ -1,24 +1,21 @@
-﻿namespace BrownianMoution.Sources.figures
+﻿using System.Windows;
+
+namespace BrownianMoution.Sources.Interfaces
 {
     public interface IPhysicsObject
     {
-
         int Mass
         {
             get;
             set;
         }
 
-        int Speed
+        Vector Speed
         {
             get;
             set;
         }
 
-        int Angle
-        {
-            get;
-            set;
-        }
+       
     }
 }
