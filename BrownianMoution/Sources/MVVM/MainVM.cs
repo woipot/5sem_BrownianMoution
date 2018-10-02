@@ -6,10 +6,10 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using BrownianMoution.Sources.figures;
-using BrownianMoution.Sources.Interfaces;
 using BrownianMoution.Sources.MVVM.Models;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Mvvm;
+using Microsoft.Win32;
 
 namespace BrownianMoution.Sources.MVVM
 {
@@ -27,8 +27,17 @@ namespace BrownianMoution.Sources.MVVM
 
         public ObservableCollection<PhysicCircle> FigureCollection => _moutionModel.FigureCollection;
 
-        public int Weidth => _moutionModel.Weight;
-        public int Height => _moutionModel.Height;
+        public int Weidth
+        {
+            get => _moutionModel.Weight;
+            set => _moutionModel.Weight = value;
+        }
+
+        public int Height
+        {
+            get => _moutionModel.Height;
+            set => _moutionModel.Height = value;
+        }
 
         public PhysicCircle SelectedCircle
         {
@@ -37,8 +46,9 @@ namespace BrownianMoution.Sources.MVVM
             set => _selectedEllipse.DataContext = value;
         }
 
-        public bool IsEnabledSelect => _selectedEllipse != null; 
+        public bool IsEnabledSelect => _selectedEllipse != null;
 
+        public int CircleCount => _moutionModel.FigureCollection.Count;
         #endregion
 
 
@@ -58,12 +68,13 @@ namespace BrownianMoution.Sources.MVVM
 
 
             AddCommand = new DelegateCommand(() =>
-           {
+            {
                var mousePos = Mouse.GetPosition(Application.Current.MainWindow);
                var figure = new PhysicCircle((int)mousePos.X, (int)mousePos.Y);
 
                _moutionModel.AddValue(figure);
-           });
+               OnPropertyChanged("CircleCount");
+            });
 
             RemoveCommand = new DelegateCommand<int?>(i =>
             {
@@ -78,6 +89,9 @@ namespace BrownianMoution.Sources.MVVM
             });
 
             SelectCommand = new DelegateCommand<MouseButtonEventArgs>(Select);
+
+            SaveCommand = new DelegateCommand(SaveInFile);
+            LoadCommand = new DelegateCommand(LoadFromFile);
         }
 
         #endregion
@@ -89,6 +103,9 @@ namespace BrownianMoution.Sources.MVVM
         public DelegateCommand<int?> RemoveCommand { get; }
         public DelegateCommand EnableTimer { get; }
         public DelegateCommand<MouseButtonEventArgs> SelectCommand { get; }
+
+        public DelegateCommand SaveCommand { get; }
+        public DelegateCommand LoadCommand { get; }
 
         #endregion
 
@@ -113,6 +130,22 @@ namespace BrownianMoution.Sources.MVVM
 
         }
 
+        private void SaveInFile()
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = @"brounMoution ini (*.xml)|*.xml";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var patch = openFileDialog.FileName;
+
+            }
+        }
+
+        private void LoadFromFile()
+        {
+            
+        }
         #endregion
     }
 }

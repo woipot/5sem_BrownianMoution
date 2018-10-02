@@ -18,13 +18,23 @@ namespace BrownianMoution.Sources.MVVM.Models
         public int Height
         {
             get => _height;
-            set => _height = value;
+            set
+            {
+                _height = value; 
+                NormolizeHeightState();
+            }
         }
+
         public int Weight
         {
             get => _weight;
-            set => _weight = value;
+            set
+            {
+                _weight = value; 
+                NormolizeWightState();
+            }
         }
+
         public ObservableCollection<PhysicCircle> FigureCollection => _figureCollection;
 
 
@@ -57,6 +67,10 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
+        public void SaveState(string filepatch)
+        {
+            
+        }
 
 
         private void DetectAndRunCollision(PhysicCircle verifiableCircle)
@@ -168,6 +182,31 @@ namespace BrownianMoution.Sources.MVVM.Models
                 cy = y0;
             }
             return new Point(cx, cy);
+        }
+
+        private void NormolizeWightState()
+        {
+            foreach (var circle in _figureCollection)
+            {
+                var isAfterBorder = circle.X > Weight;
+                if (isAfterBorder)
+                {
+                    circle.X = Weight - circle.Radius;
+                }
+
+            }
+        }
+
+        private void NormolizeHeightState()
+        {
+            foreach (var circle in _figureCollection)
+            {
+                var isAfterBorder = circle.Y > Height;
+                if (isAfterBorder)
+                {
+                    circle.Y = Height - circle.Radius;
+                }
+            }
         }
     }
 }

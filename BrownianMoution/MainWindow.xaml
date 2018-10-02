@@ -36,7 +36,7 @@
     <Grid Background="#FF2D2D30">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.75*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -45,7 +45,10 @@
 
         <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top" MinHeight="20" MaxHeight="20" Background="#FF2D2D30" Foreground="#FFDADAE7">
             <MenuItem Header="File">
-                <MenuItem Header="Save"/>
+                <MenuItem Header="Save" Command ="{Binding SaveCommand}"/>
+                <MenuItem Header="Load" Command ="{Binding LoadCommand}"/>
+                <Separator/>
+                <MenuItem Header="Exit"/>
             </MenuItem>
         </Menu>
 
@@ -62,7 +65,7 @@
                             Command="{Binding AddCommand}"/>
                     </i:EventTrigger>
 
-                    <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:EventTrigger EventName="MouseLeftButtonDown">
                         <command:EventToCommand Command="{Binding SelectCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -137,6 +140,18 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Y: " HorizontalAlignment="Center"/>
                     <TextBox Text="{Binding SelectedCircle.Y}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+                
+                <Label Content="Field Size: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Text="{Binding Weidth}" HorizontalAlignment="Stretch"/>
+                    <Label Content=" x " HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding Height}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Circeles count: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                    <TextBox Text="{Binding CircleCount, Mode=OneWay}" HorizontalAlignment="Stretch" IsReadOnly="True"/>
                 </StackPanel>
 
             </StackPanel>

@@ -10,13 +10,16 @@ namespace BrownianMoution.Sources.figures
         private int _mass;
         private int _radius;
         private Vector _speed;
+        
+        
+        #region Properties
 
         public int Mass
         {
             get => _mass;
             set
             {
-                _mass = Math.Max(1, value); 
+                _mass = Math.Max(1, value);
             }
         }
         public int Radius
@@ -24,7 +27,7 @@ namespace BrownianMoution.Sources.figures
             get => _radius;
             set
             {
-                _radius = Math.Max(1, value); 
+                _radius = Math.Max(1, value);
             }
         }
 
@@ -60,6 +63,12 @@ namespace BrownianMoution.Sources.figures
             set => _speed.Y = value;
         }
 
+
+        #endregion
+
+
+        #region Public fuctions
+
         public void Move()
         {
             X += Speed.X;
@@ -83,5 +92,7 @@ namespace BrownianMoution.Sources.figures
             Y = y;
             Speed = new Vector(speed, speed);
         }
+
+        #endregion
     }
 }
