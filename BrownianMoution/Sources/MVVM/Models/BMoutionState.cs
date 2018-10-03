@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -119,10 +120,10 @@ namespace BrownianMoution.Sources.MVVM.Models
 
                 AddChildNode("Radius", circle.Radius.ToString(), circleNode, doc);
                 AddChildNode("Mass", circle.Mass.ToString(), circleNode, doc);
-                AddChildNode("VX", circle.SpeedX.ToString(), circleNode, doc);
-                AddChildNode("VY", circle.SpeedY.ToString(), circleNode, doc);
-                AddChildNode("X", circle.X.ToString(), circleNode, doc);
-                AddChildNode("Y", circle.Y.ToString(), circleNode, doc);
+                AddChildNode("VX", circle.SpeedX.ToString(CultureInfo.CurrentCulture), circleNode, doc);
+                AddChildNode("VY", circle.SpeedY.ToString(CultureInfo.CurrentCulture), circleNode, doc);
+                AddChildNode("X", circle.X.ToString(CultureInfo.CurrentCulture), circleNode, doc);
+                AddChildNode("Y", circle.Y.ToString(CultureInfo.CurrentCulture), circleNode, doc);
 
                 root.AppendChild(circleNode);
             }
@@ -154,15 +155,14 @@ namespace BrownianMoution.Sources.MVVM.Models
 
             foreach (var child in root.ChildNodes)
             {
-                var node = child as XmlNode;
-                if (node != null)
+                if (child is XmlNode node)
                 {
-                    var radius = Convert.ToInt32(node["Radius"].InnerText);
-                    var mass = Convert.ToInt32(node["Mass"].InnerText);
-                    var vx = Convert.ToDouble(node["VX"].InnerText);
-                    var vy = Convert.ToDouble(node["VY"].InnerText);
-                    var x = Convert.ToDouble(node["X"].InnerText);
-                    var y = Convert.ToDouble(node["Y"].InnerText);
+                    var radius = Convert.ToInt32(node["Radius"]?.InnerText);
+                    var mass = Convert.ToInt32(node["Mass"]?.InnerText);
+                    var vx = Convert.ToDouble(node["VX"]?.InnerText);
+                    var vy = Convert.ToDouble(node["VY"]?.InnerText);
+                    var x = Convert.ToDouble(node["X"]?.InnerText);
+                    var y = Convert.ToDouble(node["Y"]?.InnerText);
 
                     var loadedFigure = new PhysicCircle(x, y, mass, radius, vx, vy);
                     _figureCollection.Add(loadedFigure);
@@ -172,16 +172,20 @@ namespace BrownianMoution.Sources.MVVM.Models
 
         public void DragMove(MouseDragArgs args)
         {
-            var e = args.e as DragDeltaEventArgs;
+            var e = args.EArgs as DragDeltaEventArgs;
 
-            var particle = (PhysicCircle)((FrameworkElement)args?.sender)?.DataContext;
+            var circle = (PhysicCircle)((FrameworkElement)args.Sender)?.DataContext;
 
 
-            if (particle.Left + e.HorizontalChange > 0 && particle.Left + e.HorizontalChange < Width - particle.Radius * 2)
-                particle.X += e.HorizontalChange;
+            if (circle != null && e != null)
+            {
+                if (circle.Left + e.HorizontalChange > 0 &&
+                    circle.Left + e.HorizontalChange < Width - circle.Radius * 2)
+                    circle.X += e.HorizontalChange;
 
-            if (particle.Top + e.VerticalChange > 0 && particle.Top + e.VerticalChange < Height - particle.Radius * 2)
-                particle.Y += e.VerticalChange;
+                if (circle.Top + e.VerticalChange > 0 && circle.Top + e.VerticalChange < Height - circle.Radius * 2)
+                    circle.Y += e.VerticalChange;
+            }
         }
 
         #endregion
@@ -282,7 +286,7 @@ namespace BrownianMoution.Sources.MVVM.Models
 
             }
 
-            verifiableCircle = NormolizeOne(verifiableCircle);
+            NormolizeOne(verifiableCircle);
         }
 
         private static void CollisionProc(PhysicCircle circle1, PhysicCircle circle2)

@@ -47,8 +47,6 @@ namespace BrownianMoution.Sources.MVVM
             set => _selectedEllipse.DataContext = value;
         }
 
-        public bool IsEnabledSelect => _selectedEllipse != null;
-
         public int CircleCount => _moutionModel.FigureCollection.Count;
 
         public PhysicCircle CirclePrefab { get; set; }
@@ -75,8 +73,7 @@ namespace BrownianMoution.Sources.MVVM
             _timer = new Timer {Interval = 10};
             _timer.Tick += _moutionModel.Tick;
 
-            _selectedEllipse = new Ellipse();
-            _selectedEllipse.DataContext = new PhysicCircle();
+            _selectedEllipse = new Ellipse {DataContext = new PhysicCircle()};
 
             CirclePrefab = new PhysicCircle();
 

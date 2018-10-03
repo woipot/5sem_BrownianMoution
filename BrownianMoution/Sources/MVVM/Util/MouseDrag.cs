@@ -52,11 +52,11 @@ namespace BrownianMoution.Sources.MVVM.Util
         private static void OnMouseDrag(object sender, RoutedEventArgs e)
         {
             Control control = sender as Thumb;
-            ICommand command = (ICommand)control.GetValue(CommandProperty);
-            var parameter = new MouseDragArgs() { e = e, sender = sender };
+            var command = (ICommand)control?.GetValue(CommandProperty);
+            var parameter = new MouseDragArgs() { EArgs = e, Sender = sender };
 
             object commandParameter = parameter;
-            command.Execute(commandParameter);
+            command?.Execute(commandParameter);
         }
     }
 }

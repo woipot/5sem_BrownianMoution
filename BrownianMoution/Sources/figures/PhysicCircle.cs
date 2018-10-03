@@ -17,18 +17,12 @@ namespace BrownianMoution.Sources.figures
         public int Mass
         {
             get => _mass;
-            set
-            {
-                _mass = Math.Max(1, value);
-            }
+            set => _mass = Math.Max(1, value);
         }
         public int Radius
         {
             get => _radius;
-            set
-            {
-                _radius = Math.Max(1, value);
-            }
+            set => _radius = Math.Max(1, value);
         }
 
         public double X { get; set; }

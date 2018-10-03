@@ -2,6 +2,7 @@
 
 namespace BrownianMoution
 {
+    /// <inheritdoc />
     /// <summary>
     /// Логика взаимодействия для App.xaml
     /// </summary>

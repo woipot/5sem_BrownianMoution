@@ -4,8 +4,8 @@ namespace BrownianMoution.Sources.MVVM.Util
 {
     public class MouseDragArgs
     {
-        public object sender { get; set; }
-        public RoutedEventArgs e { get; set; }
+        public object Sender { get; set; }
+        public RoutedEventArgs EArgs { get; set; }
 
     }
 }
