@@ -28,7 +28,7 @@ namespace BrownianMoution.Sources.MVVM
 
         public IEnumerable<PhysicCircle> FigureCollection => _moutionModel.FigureCollection;
 
-        public int Weidth
+        public int Width
         {
             get => _moutionModel.Width;
             set => _moutionModel.Width = Math.Max(1, value);

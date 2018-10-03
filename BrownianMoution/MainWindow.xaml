@@ -54,7 +54,7 @@
 
         <Viewbox  Grid.Column="0" Grid.Row="1">
             <ItemsControl Height="{Binding Height}" 
-                          Width="{Binding Weidth}" 
+                          Width="{Binding Width}" 
                           BorderThickness="2" BorderBrush="#FF686868"
                           ItemsSource="{Binding FigureCollection}"
                           Background="#FF1E1E23">
@@ -199,7 +199,7 @@
 
             <Label Content="Field Size: " HorizontalAlignment="Left" Foreground="Aqua"/>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Weidth}" HorizontalAlignment="Stretch"/>
+                <TextBox Text="{Binding Width}" HorizontalAlignment="Stretch"/>
                 <Label Content=" x " HorizontalAlignment="Center"/>
                 <TextBox Text="{Binding Height}" HorizontalAlignment="Stretch"/>
             </StackPanel>

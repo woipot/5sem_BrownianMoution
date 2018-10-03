@@ -106,7 +106,7 @@ namespace BrownianMoution.Sources.MVVM.Models
 
             var root = doc.CreateElement("collection");
 
-            var weightAttr = doc.CreateAttribute("Weidth");
+            var weightAttr = doc.CreateAttribute("Width");
             weightAttr.InnerText = _width.ToString();
             root.Attributes.Append(weightAttr);
 
@@ -147,11 +147,11 @@ namespace BrownianMoution.Sources.MVVM.Models
                 throw new FileLoadException("incorrect file structure");
             }
 
-            var weidth = Convert.ToInt32(root.Attributes["Weidth"].InnerText);
+            var width = Convert.ToInt32(root.Attributes["Width"].InnerText);
             var height = Convert.ToInt32(root.Attributes["Height"].InnerText);
 
             Height = height;
-            Width = weidth;
+            Width = width;
 
             foreach (var child in root.ChildNodes)
             {
