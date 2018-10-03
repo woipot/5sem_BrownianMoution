@@ -20,7 +20,6 @@ namespace BrownianMoution.Sources.MVVM
 
         private Ellipse _selectedEllipse;
 
-
         #region Properties
 
         public ObservableCollection<PhysicCircle> FigureCollection => _moutionModel.FigureCollection;
@@ -28,13 +27,13 @@ namespace BrownianMoution.Sources.MVVM
         public int Weidth
         {
             get => _moutionModel.Weidth;
-            set => _moutionModel.Weidth = value;
+            set => _moutionModel.Weidth = Math.Max(1, value);
         }
 
         public int Height
         {
             get => _moutionModel.Height;
-            set => _moutionModel.Height = value;
+            set => _moutionModel.Height = Math.Max(1, value);
         }
 
         public PhysicCircle SelectedCircle
@@ -47,6 +46,9 @@ namespace BrownianMoution.Sources.MVVM
         public bool IsEnabledSelect => _selectedEllipse != null;
 
         public int CircleCount => _moutionModel.FigureCollection.Count;
+
+        public PhysicCircle CirclePrefab { get; set; }
+
         #endregion
 
 
@@ -64,13 +66,14 @@ namespace BrownianMoution.Sources.MVVM
             _selectedEllipse = new Ellipse();
             _selectedEllipse.DataContext = new PhysicCircle();
 
+            CirclePrefab = new PhysicCircle();
+
 
             AddCommand = new DelegateCommand(() =>
             {
-               var mousePos = Mouse.GetPosition(Application.Current.MainWindow);
-               var figure = new PhysicCircle((int)mousePos.X, (int)mousePos.Y);
+               //var mousePos = Mouse.GetPosition(Application.Current.MainWindow);
 
-               _moutionModel.AddValue(figure);
+               _moutionModel.AddValue((PhysicCircle)CirclePrefab.Clone());
                OnPropertyChanged("CircleCount");
             });
 
@@ -82,7 +85,6 @@ namespace BrownianMoution.Sources.MVVM
 
             EnableTimer = new DelegateCommand(() =>
             {
-
                 _timer.IsEnabled = !_timer.IsEnabled;
             });
 
@@ -149,6 +151,7 @@ namespace BrownianMoution.Sources.MVVM
                 try
                 {
                     _moutionModel.LoadState(patch);
+                    OnPropertyChanged("CircleCount");
                 }
                 catch (Exception e)
                 {

@@ -1,4 +1,4 @@
-﻿using BrownianMoution.Sources.figures;
+﻿using System;
 
 namespace BrownianMoution.Sources.Interfaces
 {

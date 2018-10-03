@@ -5,7 +5,7 @@ using Microsoft.Practices.Prism.Mvvm;
 
 namespace BrownianMoution.Sources.figures
 {
-    public class PhysicCircle : BindableBase, IPhysicFigure
+    public class PhysicCircle : BindableBase, IPhysicFigure, ICloneable
     {
         private int _mass;
         private int _radius;
@@ -69,7 +69,7 @@ namespace BrownianMoution.Sources.figures
 
         #region Constructors
 
-        public PhysicCircle(double x = 0, double y = 0, int mass = 1, int radius = 15, int speedX = 1, int speedY = 1)
+        public PhysicCircle(double x = 0, double y = 0, int mass = 1, int radius = 15, double speedX = 1, double speedY = 1)
         {
             Mass = mass;
             Radius = radius;
@@ -98,8 +98,11 @@ namespace BrownianMoution.Sources.figures
             return result;
         }
 
-       
-
         #endregion
+
+        public object Clone()
+        {
+            return new PhysicCircle(X, Y, _mass, _radius, SpeedX, SpeedY);
+        }
     }
 }

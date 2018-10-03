@@ -9,7 +9,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Gray" BorderBrush="#FF2D2D30" Foreground="#FFABABAB" >
+        Title="MainWindow" Height="500" Width="800" Background="Gray" BorderBrush="#FF2D2D30" Foreground="#FFABABAB" >
     <Window.DataContext>
         <mvvm:MainVM/>
     </Window.DataContext>
@@ -20,11 +20,11 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
-        
+
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="White"/>
         </Style>
-        
+
         <Style TargetType="TextBox">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
@@ -32,11 +32,11 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid Background="#FF2D2D30">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="0.75*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -58,7 +58,7 @@
                           BorderThickness="2" BorderBrush="#FF686868"
                           ItemsSource="{Binding FigureCollection}"
                           Background="#FF1E1E23">
-                
+
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction 
@@ -107,58 +107,96 @@
 
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,10,20" MinWidth="80">
             <Button Content="Start/Stop" Command="{Binding EnableTimer}" Background="#FF686868" Foreground="White" MinHeight="30"/>
-            
-            <StackPanel Margin="0, 20">
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Radius: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.Radius}" HorizontalAlignment="Stretch" Height="15" />
-                </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Mass: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.Mass}" HorizontalAlignment="Stretch"/>
-                </StackPanel>
+            <TabControl Background="#FF2D2D30" Margin="0, 20">
+                <TabItem  Header="Track panel" BorderBrush="#FF686868">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Radius: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.Radius}" HorizontalAlignment="Stretch" Height="15" />
+                        </StackPanel>
 
-                <Label Content="Speed: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Mass: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.Mass}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <Label Content="Speed: " HorizontalAlignment="Left" Foreground="Aqua"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="VX: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.SpeedX}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="VY: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.SpeedY}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <Label Content="Coords: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="X: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.X}" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Y: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding SelectedCircle.Y}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+
                 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="VX: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.SpeedX}" HorizontalAlignment="Stretch"/>
-                </StackPanel>
+                <TabItem Header="Add option" BorderBrush="#FF686868">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Radius: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.Radius}" HorizontalAlignment="Stretch" Height="15" />
+                        </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="VY: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.SpeedY}" HorizontalAlignment="Stretch"/>
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Mass: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.Mass}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
 
-                <Label Content="Coords: " HorizontalAlignment="Left" Foreground="Aqua"/>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="X: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.X}" HorizontalAlignment="Stretch" />
-                </StackPanel>
+                        <Label Content="Speed: " HorizontalAlignment="Left" Foreground="Aqua"/>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Y: " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding SelectedCircle.Y}" HorizontalAlignment="Stretch"/>
-                </StackPanel>
-                
-                <Label Content="Field Size: " HorizontalAlignment="Left" Foreground="Aqua"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding Weidth}" HorizontalAlignment="Stretch"/>
-                    <Label Content=" x " HorizontalAlignment="Center"/>
-                    <TextBox Text="{Binding Height}" HorizontalAlignment="Stretch"/>
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="VX: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.SpeedX}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Circeles count: " HorizontalAlignment="Left" Foreground="Aqua"/>
-                    <TextBox Text="{Binding CircleCount, Mode=OneWay}" HorizontalAlignment="Stretch" IsReadOnly="True"/>
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="VY: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.SpeedY}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
 
+                        <Label Content="Coords: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="X: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.X}" HorizontalAlignment="Stretch" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Y: " HorizontalAlignment="Center"/>
+                            <TextBox Text="{Binding CirclePrefab.Y}" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+
+            <Label Content="Field Size: " HorizontalAlignment="Left" Foreground="Aqua"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Weidth}" HorizontalAlignment="Stretch"/>
+                <Label Content=" x " HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding Height}" HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Circeles count: " HorizontalAlignment="Left" Foreground="Aqua"/>
+                <TextBox Text="{Binding CircleCount, Mode=OneWay}" HorizontalAlignment="Stretch" IsReadOnly="True"/>
             </StackPanel>
         </StackPanel>
-        
-
-
     </Grid>
 
 

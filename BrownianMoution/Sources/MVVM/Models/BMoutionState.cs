@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Xml;
 using BrownianMoution.Sources.figures;
@@ -10,16 +10,19 @@ namespace BrownianMoution.Sources.MVVM.Models
 {
     public class BMoutionState : BindableBase
     {
-        private int _height = 400;
+        private int _height = 500;
         private int _weidth = 670;
         private readonly ObservableCollection<PhysicCircle> _figureCollection;
+
+
+        #region Properties
 
         public int Height
         {
             get => _height;
             set
             {
-                _height = value; 
+                _height = value;
                 NormolizeHeightState();
             }
         }
@@ -29,24 +32,32 @@ namespace BrownianMoution.Sources.MVVM.Models
             get => _weidth;
             set
             {
-                _weidth = value; 
+                _weidth = value;
                 NormolizeWightState();
             }
         }
 
         public ObservableCollection<PhysicCircle> FigureCollection => _figureCollection;
 
+        #endregion
+
+
+        #region Constructor
 
         public BMoutionState()
         {
             _figureCollection = new ObservableCollection<PhysicCircle>();
         }
 
+        #endregion
+
+
+        #region Publick methods
 
         public void AddValue(PhysicCircle figure)
         {
-            _figureCollection.Add(figure);
-            OnPropertyChanged("Add");
+            var normolizedFigure = NormolizeOne(figure);
+            _figureCollection.Add(normolizedFigure);
         }
 
         public void RemoveValue(int index)
@@ -64,6 +75,7 @@ namespace BrownianMoution.Sources.MVVM.Models
 
                 OnPropertyChanged("Figures");
             }
+
         }
 
         public void SaveState(string filepatch)
@@ -89,11 +101,11 @@ namespace BrownianMoution.Sources.MVVM.Models
                 var circleNode = doc.CreateElement("Circle");
 
                 AddChildNode("Radius", circle.Radius.ToString(), circleNode, doc);
-                AddChildNode("Mass",   circle.Mass.ToString(), circleNode, doc);
-                AddChildNode("VX", circle.SpeedX.ToString(CultureInfo.InvariantCulture), circleNode, doc);
-                AddChildNode("VY", circle.SpeedY.ToString(CultureInfo.InvariantCulture), circleNode, doc);
-                AddChildNode("X", circle.X.ToString(CultureInfo.InvariantCulture), circleNode, doc);
-                AddChildNode("Y", circle.Y.ToString(CultureInfo.InvariantCulture), circleNode, doc);
+                AddChildNode("Mass", circle.Mass.ToString(), circleNode, doc);
+                AddChildNode("VX", circle.SpeedX.ToString(), circleNode, doc);
+                AddChildNode("VY", circle.SpeedY.ToString(), circleNode, doc);
+                AddChildNode("X", circle.X.ToString(), circleNode, doc);
+                AddChildNode("Y", circle.Y.ToString(), circleNode, doc);
 
                 root.AppendChild(circleNode);
             }
@@ -114,8 +126,7 @@ namespace BrownianMoution.Sources.MVVM.Models
 
             if (root == null)
             {
-
-                return;
+                throw new FileLoadException("incorrect file structure");
             }
 
             var weidth = Convert.ToInt32(root.Attributes["Weidth"].InnerText);
@@ -131,10 +142,10 @@ namespace BrownianMoution.Sources.MVVM.Models
                 {
                     var radius = Convert.ToInt32(node["Radius"].InnerText);
                     var mass = Convert.ToInt32(node["Mass"].InnerText);
-                    var vx = Convert.ToInt32(node["VX"].InnerText);
-                    var vy = Convert.ToInt32(node["VY"].InnerText);
-                    var x = Convert.ToInt32(node["X"].InnerText);
-                    var y = Convert.ToInt32(node["Y"].InnerText);
+                    var vx = Convert.ToDouble(node["VX"].InnerText);
+                    var vy = Convert.ToDouble(node["VY"].InnerText);
+                    var x = Convert.ToDouble(node["X"].InnerText);
+                    var y = Convert.ToDouble(node["Y"].InnerText);
 
                     var loadedFigure = new PhysicCircle(x, y, mass, radius, vx, vy);
                     _figureCollection.Add(loadedFigure);
@@ -142,7 +153,10 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
+        #endregion
 
+
+        #region Private Methods
 
         private static void AddChildNode(string childName, string childText, XmlElement parentNode, XmlDocument doc)
         {
@@ -164,7 +178,7 @@ namespace BrownianMoution.Sources.MVVM.Models
             else if (verifiableCircle.X < verifiableCircle.Radius)
             {
                 if (verifiableCircle.Speed.X < 0)
-                { 
+                {
                     verifiableCircle.Speed = new Vector(-verifiableCircle.Speed.X, verifiableCircle.Speed.Y);
                 }
 
@@ -191,14 +205,14 @@ namespace BrownianMoution.Sources.MVVM.Models
                     {
                         var distance = verifiableCircle.GetDistance(physicCircleB);
                         var absolutteDistance = distance - verifiableCircle.Radius - physicCircleB.Radius;
-                        if ( absolutteDistance <= 0)
+                        if (absolutteDistance <= 0)
                         {
                             CollisionProc(verifiableCircle, physicCircleB);
 
                         }
                     }
                 }
-               
+
             }
         }
 
@@ -248,7 +262,7 @@ namespace BrownianMoution.Sources.MVVM.Models
             var det = a1 * a1 - -b1 * b1;
             double cx;
             double cy;
-          
+
             if (Math.Abs(det) > 0)
             {
                 cx = (a1 * c1 - b1 * c2) / det;
@@ -260,6 +274,36 @@ namespace BrownianMoution.Sources.MVVM.Models
                 cy = y0;
             }
             return new Point(cx, cy);
+        }
+
+
+        private PhysicCircle NormolizeOne(PhysicCircle circle)
+        {
+            var isLeftOut = circle.X < circle.Radius;
+            if (isLeftOut)
+            {
+                circle.X = circle.Radius;
+            }
+            else
+            {
+                var isRightOut = circle.X > Weidth - circle.Radius;
+                if (isRightOut)
+                    circle.X = Weidth - circle.Radius;
+            }
+
+            var isTopOut = circle.Y < circle.Radius;
+            if (isTopOut)
+            {
+                circle.Y = circle.Radius;
+            }
+            else
+            {
+                var isBottomOut = circle.Y > Height - circle.Radius;
+                if (isBottomOut)
+                    circle.Y = Height - circle.Radius;
+            }
+
+            return circle;
         }
 
         private void NormolizeWightState()
@@ -286,5 +330,9 @@ namespace BrownianMoution.Sources.MVVM.Models
                 }
             }
         }
+
+        #endregion  }
+
+
     }
 }
