@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Windows;
 using BrownianMoution.Sources.Interfaces;
 using Microsoft.Practices.Prism.Mvvm;
@@ -100,9 +101,27 @@ namespace BrownianMoution.Sources.figures
 
         #endregion
 
+
+        #region Iclonable
+
         public object Clone()
         {
             return new PhysicCircle(X, Y, _mass, _radius, SpeedX, SpeedY);
         }
+
+        #endregion
+
+
+        #region Overrides 
+
+        public override string ToString()
+        {
+            return "Circle-> Radius: " + _radius + ", Mass: " + _mass + ", Speed_X: " + SpeedX + ", SpeedY: " + SpeedY +
+                   ", X: " + X + ", Y: " + Y;
+        }
+
+        #endregion
+
+
     }
 }

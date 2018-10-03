@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using BrownianMoution.Sources.figures;
 using Microsoft.Practices.Prism.Mvvm;
@@ -13,6 +15,9 @@ namespace BrownianMoution.Sources.MVVM.Models
         private int _height = 500;
         private int _weidth = 670;
         private readonly ObservableCollection<PhysicCircle> _figureCollection;
+
+        private StreamWriter _sr;
+        private bool _isLogOn;
 
 
         #region Properties
@@ -39,6 +44,16 @@ namespace BrownianMoution.Sources.MVVM.Models
 
         public ObservableCollection<PhysicCircle> FigureCollection => _figureCollection;
 
+        public bool IsLogOn
+        {
+            get => _isLogOn;
+            set
+            {
+                _isLogOn = value;
+                OnOffReader();
+            }
+        }
+
         #endregion
 
 
@@ -52,7 +67,7 @@ namespace BrownianMoution.Sources.MVVM.Models
         #endregion
 
 
-        #region Publick methods
+        #region Public methods
 
         public void AddValue(PhysicCircle figure)
         {
@@ -60,22 +75,23 @@ namespace BrownianMoution.Sources.MVVM.Models
             _figureCollection.Add(normolizedFigure);
         }
 
-        public void RemoveValue(int index)
+        public void RemoveValue(PhysicCircle circle)
         {
-            if (index >= 0 && index < _figureCollection.Count) _figureCollection.RemoveAt(index);
-            OnPropertyChanged("Remove");
+            _figureCollection.Remove(circle);
         }
 
         public void Tick(object sender, EventArgs args)
         {
-            foreach (var circleA in _figureCollection)
+            for (var i = 0; i < _figureCollection.Count; i++)
             {
-                circleA.Move();
-                DetectAndRunCollision(circleA);
+                var circle = _figureCollection[i];
+                circle.Move();
+                //_figureCollection[i] = circle;
+
+                DetectAndRunCollision(i);
 
                 OnPropertyChanged("Figures");
             }
-
         }
 
         public void SaveState(string filepatch)
@@ -165,13 +181,21 @@ namespace BrownianMoution.Sources.MVVM.Models
             parentNode.AppendChild(child);
         }
 
-        private void DetectAndRunCollision(PhysicCircle verifiableCircle)
+        private void DetectAndRunCollision(int index)
         {
+            var verifiableCircle = _figureCollection[index];
+
             if (verifiableCircle.X > _weidth - verifiableCircle.Radius)
             {
                 if (verifiableCircle.Speed.X > 0)
                 {
+                    if(IsLogOn)
+                        LogCollisionBefore("#" + index + verifiableCircle, "Right Border");
+
                     verifiableCircle.Speed = new Vector(-verifiableCircle.Speed.X, verifiableCircle.Speed.Y);
+
+                    if (IsLogOn)
+                        LogCollisionAfter("#" + index + verifiableCircle);
                 }
 
             }
@@ -179,7 +203,13 @@ namespace BrownianMoution.Sources.MVVM.Models
             {
                 if (verifiableCircle.Speed.X < 0)
                 {
+                    if (IsLogOn)
+                        LogCollisionBefore("#" + index + verifiableCircle, "Left Border");
+
                     verifiableCircle.Speed = new Vector(-verifiableCircle.Speed.X, verifiableCircle.Speed.Y);
+
+                    if (IsLogOn)
+                        LogCollisionAfter("#" + index + verifiableCircle);
                 }
 
             }
@@ -187,14 +217,28 @@ namespace BrownianMoution.Sources.MVVM.Models
             {
                 if (verifiableCircle.Speed.Y > 0)
                 {
+                    if (IsLogOn)
+                        LogCollisionBefore("#" + index + verifiableCircle, "Bottom Border");
+
                     verifiableCircle.Speed = new Vector(verifiableCircle.Speed.X, -verifiableCircle.Speed.Y);
+
+                    if (IsLogOn)
+                        LogCollisionAfter("#" + index + verifiableCircle);
                 }
             }
             else if (verifiableCircle.Y < verifiableCircle.Radius)
             {
                 if (verifiableCircle.Speed.Y < 0)
                 {
+                    if (IsLogOn)
+                        LogCollisionBefore("#" + index + verifiableCircle, "Top Border");
+
                     verifiableCircle.Speed = new Vector(verifiableCircle.Speed.X, -verifiableCircle.Speed.Y);
+
+                    if (IsLogOn)
+                        LogCollisionAfter("#" + index + verifiableCircle);
+
+
                 }
             }
             else
@@ -207,13 +251,23 @@ namespace BrownianMoution.Sources.MVVM.Models
                         var absolutteDistance = distance - verifiableCircle.Radius - physicCircleB.Radius;
                         if (absolutteDistance <= 0)
                         {
+                            var circleBIndex = _figureCollection.IndexOf(physicCircleB);
+
+                            if (IsLogOn)
+                                LogCollisionBefore("#" + index + verifiableCircle, "#" + circleBIndex + physicCircleB);
+
                             CollisionProc(verifiableCircle, physicCircleB);
+
+                            if (IsLogOn)
+                                LogCollisionAfter("#" + index + verifiableCircle, "#" + circleBIndex + verifiableCircle);
 
                         }
                     }
                 }
 
             }
+
+            verifiableCircle = NormolizeOne(verifiableCircle);
         }
 
         private static void CollisionProc(PhysicCircle circle1, PhysicCircle circle2)
@@ -331,8 +385,56 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
-        #endregion  }
+        private void LogCollisionBefore(string infoFirst, string infoSecond)
+        {
+            if (_sr != null)
+            {
+                var result = new StringBuilder();
 
+                result.Append("-------------------- Collision time: " + DateTime.Now.ToLongTimeString() +
+                              "-------------------->\r\n");
 
+                result.Append("***Before:  \r\n");
+                result.Append(infoFirst + "\r\n----Collapsed with:\r\n" + infoSecond);
+                result.Append("\r\n\r\n");
+                    
+                _sr.Write(result.ToString());
+            }
+        }
+
+        private void LogCollisionAfter(params string[] objectsInfo)
+        {
+            if (_sr != null)
+            {
+                var result = new StringBuilder();
+
+                result.Append("***After:  \r\n");
+                foreach (var s in objectsInfo)
+                {
+                    result.Append(s + "\r\n");
+                }
+
+                result.Append("<------------------------------------------------------------>\r\n\r\n");
+                _sr.Write(result.ToString());
+                _sr.Flush();
+            }
+        }
+
+        private void OnOffReader()
+        {
+            if (IsLogOn && _sr == null)
+            {
+                var patch = Directory.GetCurrentDirectory();
+                _sr = new StreamWriter(patch + @"\log.txt");
+            }
+
+            if (IsLogOn == false && _sr != null)
+            {
+                _sr.Dispose();
+                _sr = null;
+            }
+
+        }
+        #endregion  
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -9,20 +10,24 @@ using BrownianMoution.Sources.figures;
 using BrownianMoution.Sources.MVVM.Models;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Mvvm;
-using Microsoft.Win32;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 
 namespace BrownianMoution.Sources.MVVM
 {
     public class MainVM : BindableBase
     {
         private readonly BMoutionState _moutionModel;
-        private DispatcherTimer _timer;
+        private Timer _timer;
 
         private Ellipse _selectedEllipse;
 
+
         #region Properties
 
-        public ObservableCollection<PhysicCircle> FigureCollection => _moutionModel.FigureCollection;
+        public IEnumerable<PhysicCircle> FigureCollection => _moutionModel.FigureCollection;
 
         public int Weidth
         {
@@ -49,6 +54,14 @@ namespace BrownianMoution.Sources.MVVM
 
         public PhysicCircle CirclePrefab { get; set; }
 
+        public bool UseMouseCords { get; set; } = true;
+
+        public bool IsLogOn
+        {
+            get => _moutionModel.IsLogOn;
+            set => _moutionModel.IsLogOn = value;
+        }
+
         #endregion
 
 
@@ -60,7 +73,7 @@ namespace BrownianMoution.Sources.MVVM
             _moutionModel.PropertyChanged += (s, e) => { OnPropertyChanged(e.PropertyName); };
 
 
-            _timer = new DispatcherTimer { Interval = new TimeSpan(10000) };
+            _timer = new Timer {Interval = 10};
             _timer.Tick += _moutionModel.Tick;
 
             _selectedEllipse = new Ellipse();
@@ -71,21 +84,28 @@ namespace BrownianMoution.Sources.MVVM
 
             AddCommand = new DelegateCommand(() =>
             {
-               //var mousePos = Mouse.GetPosition(Application.Current.MainWindow);
+                if (UseMouseCords)
+                {
+                    var mousePos = Mouse.GetPosition(Application.Current.MainWindow);
+                    CirclePrefab.X = mousePos.X;
+                    CirclePrefab.Y = mousePos.Y;
+                }
 
-               _moutionModel.AddValue((PhysicCircle)CirclePrefab.Clone());
-               OnPropertyChanged("CircleCount");
+                _moutionModel.AddValue((PhysicCircle)CirclePrefab.Clone());
+
+                OnPropertyChanged("CircleCount");
             });
 
-            RemoveCommand = new DelegateCommand<int?>(i =>
+            RemoveCommand = new DelegateCommand(() =>
             {
-                if (i.HasValue)
-                    _moutionModel.RemoveValue(i.Value);
+                _moutionModel.RemoveValue(SelectedCircle);
+                SelectedCircle = new PhysicCircle();
+                OnPropertyChanged("CircleCount");
             });
 
             EnableTimer = new DelegateCommand(() =>
             {
-                _timer.IsEnabled = !_timer.IsEnabled;
+                _timer.Enabled = !_timer.Enabled;
             });
 
             SelectCommand = new DelegateCommand<MouseButtonEventArgs>(Select);
@@ -100,7 +120,7 @@ namespace BrownianMoution.Sources.MVVM
         #region Commands
 
         public DelegateCommand AddCommand { get; }
-        public DelegateCommand<int?> RemoveCommand { get; }
+        public DelegateCommand RemoveCommand { get; }
         public DelegateCommand EnableTimer { get; }
         public DelegateCommand<MouseButtonEventArgs> SelectCommand { get; }
 

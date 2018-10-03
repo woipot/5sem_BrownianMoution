@@ -40,7 +40,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1.5*"/>
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Grid.ColumnSpan="2" VerticalAlignment="Top" MinHeight="20" MaxHeight="20" Background="#FF2D2D30" Foreground="#FFDADAE7">
@@ -105,10 +105,12 @@
             </ItemsControl>
         </Viewbox>
 
-        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,20,10,20" MinWidth="80">
+        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0, 10" MinWidth="80" Grid.RowSpan="2">
             <Button Content="Start/Stop" Command="{Binding EnableTimer}" Background="#FF686868" Foreground="White" MinHeight="30"/>
 
-            <TabControl Background="#FF2D2D30" Margin="0, 20">
+            <CheckBox IsChecked="{Binding IsLogOn}" Content="Logs" Foreground="Aqua" HorizontalAlignment="Center" Margin="0, 5"/>
+
+            <TabControl Background="#FF2D2D30" Margin="0, 5, 0 , 10">
                 <TabItem  Header="Track panel" BorderBrush="#FF686868">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -143,10 +145,12 @@
                             <Label Content="Y: " HorizontalAlignment="Center"/>
                             <TextBox Text="{Binding SelectedCircle.Y}" HorizontalAlignment="Stretch"/>
                         </StackPanel>
+
+                        <Button Content="Remove" Margin="0, 10, 0, 0" Command="{Binding RemoveCommand}" Background="#FF686868" Foreground="White"/>
                     </StackPanel>
                 </TabItem>
 
-                
+
                 <TabItem Header="Add option" BorderBrush="#FF686868">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
@@ -181,6 +185,8 @@
                             <Label Content="Y: " HorizontalAlignment="Center"/>
                             <TextBox Text="{Binding CirclePrefab.Y}" HorizontalAlignment="Stretch"/>
                         </StackPanel>
+
+                        <CheckBox IsChecked="{Binding UseMouseCords}" Content="Use Mouse Coords" Foreground="Aqua" HorizontalAlignment="Center" Margin="0, 10"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
