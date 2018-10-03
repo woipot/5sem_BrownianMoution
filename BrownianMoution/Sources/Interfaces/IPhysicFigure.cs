@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BrownianMoution.Sources.Interfaces
+﻿namespace BrownianMoution.Sources.Interfaces
 {
     public interface IPhysicFigure : IFigure, IPhysicsObject
     {

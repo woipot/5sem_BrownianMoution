@@ -8,6 +8,7 @@
         xmlns:figures="clr-namespace:BrownianMoution.Sources.figures"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:util="clr-namespace:BrownianMoution.Sources.MVVM.Util"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800" Background="Gray" BorderBrush="#FF2D2D30" Foreground="#FFABABAB" >
     <Window.DataContext>
@@ -65,19 +66,25 @@
                             Command="{Binding AddCommand}"/>
                     </i:EventTrigger>
 
-                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                    <i:EventTrigger EventName="MouseRightButtonDown">
                         <command:EventToCommand Command="{Binding SelectCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
                 <ItemsControl.Resources>
                     <DataTemplate DataType="{x:Type figures:PhysicCircle}" >
-                        <Ellipse Name="Ellipse"
-                                 Width="{Binding Size}" 
-                                 Height="{Binding Size}"
-                                 Fill="Beige"
-                                 Stroke="Black">
-                        </Ellipse>
+                        <Thumb util:MouseDrag.Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.DragDeltaCommand}">
+                            <Thumb.Template>
+                                <ControlTemplate>
+                                    <Ellipse Name="Ellipse"
+                                            Width="{Binding Size}" 
+                                            Height="{Binding Size}"
+                                            Fill="Beige"
+                                            Stroke="Black">
+                                    </Ellipse>
+                                </ControlTemplate>
+                            </Thumb.Template>
+                        </Thumb>
                     </DataTemplate>
                 </ItemsControl.Resources>
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Windows;
 using BrownianMoution.Sources.Interfaces;
 using Microsoft.Practices.Prism.Mvvm;

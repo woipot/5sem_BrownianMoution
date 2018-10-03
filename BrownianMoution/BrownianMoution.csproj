@@ -190,6 +190,8 @@
     <Compile Include="Sources\Interfaces\IPhysicsObject.cs" />
     <Compile Include="Sources\MVVM\MainVM.cs" />
     <Compile Include="Sources\MVVM\Models\BMoutionState.cs" />
+    <Compile Include="Sources\MVVM\Util\MouseDrag.cs" />
+    <Compile Include="Sources\MVVM\Util\MouseDragArgs.cs" />
     <Content Include="FodyWeavers.xml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>

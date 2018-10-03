@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using BrownianMoution.Sources.figures;
 using BrownianMoution.Sources.MVVM.Models;
+using BrownianMoution.Sources.MVVM.Util;
 using Microsoft.Practices.Prism.Commands;
 using Microsoft.Practices.Prism.Mvvm;
 using Application = System.Windows.Application;
@@ -31,8 +30,8 @@ namespace BrownianMoution.Sources.MVVM
 
         public int Weidth
         {
-            get => _moutionModel.Weidth;
-            set => _moutionModel.Weidth = Math.Max(1, value);
+            get => _moutionModel.Width;
+            set => _moutionModel.Width = Math.Max(1, value);
         }
 
         public int Height
@@ -112,6 +111,11 @@ namespace BrownianMoution.Sources.MVVM
 
             SaveCommand = new DelegateCommand(SaveInFile);
             LoadCommand = new DelegateCommand(LoadFromFile);
+
+            DragDeltaCommand = new DelegateCommand<MouseDragArgs>((args) =>
+            { 
+                _moutionModel.DragMove(args);
+             });
         }
 
         #endregion
@@ -127,6 +131,8 @@ namespace BrownianMoution.Sources.MVVM
         public DelegateCommand SaveCommand { get; }
         public DelegateCommand LoadCommand { get; }
 
+        public DelegateCommand<MouseDragArgs> DragDeltaCommand { get; }
+
         #endregion
 
 
@@ -134,10 +140,7 @@ namespace BrownianMoution.Sources.MVVM
 
         private void Select(MouseButtonEventArgs args)
         {
-            var currentEllipse = args.OriginalSource as Ellipse;
-
-
-            if (currentEllipse != null)
+            if (args.OriginalSource is Ellipse currentEllipse)
             {
                 currentEllipse.Fill = Brushes.Chartreuse;
 

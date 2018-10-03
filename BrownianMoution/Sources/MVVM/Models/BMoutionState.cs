@@ -3,9 +3,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Forms.VisualStyles;
+using System.Windows.Controls.Primitives;
 using System.Xml;
 using BrownianMoution.Sources.figures;
+using BrownianMoution.Sources.MVVM.Util;
 using Microsoft.Practices.Prism.Mvvm;
 
 namespace BrownianMoution.Sources.MVVM.Models
@@ -13,7 +14,7 @@ namespace BrownianMoution.Sources.MVVM.Models
     public class BMoutionState : BindableBase
     {
         private int _height = 500;
-        private int _weidth = 670;
+        private int _width = 670;
         private readonly ObservableCollection<PhysicCircle> _figureCollection;
 
         private StreamWriter _sr;
@@ -32,12 +33,12 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
-        public int Weidth
+        public int Width
         {
-            get => _weidth;
+            get => _width;
             set
             {
-                _weidth = value;
+                _width = value;
                 NormolizeWightState();
             }
         }
@@ -105,7 +106,7 @@ namespace BrownianMoution.Sources.MVVM.Models
             var root = doc.CreateElement("collection");
 
             var weightAttr = doc.CreateAttribute("Weidth");
-            weightAttr.InnerText = _weidth.ToString();
+            weightAttr.InnerText = _width.ToString();
             root.Attributes.Append(weightAttr);
 
             var heightAttr = doc.CreateAttribute("Height");
@@ -149,7 +150,7 @@ namespace BrownianMoution.Sources.MVVM.Models
             var height = Convert.ToInt32(root.Attributes["Height"].InnerText);
 
             Height = height;
-            Weidth = weidth;
+            Width = weidth;
 
             foreach (var child in root.ChildNodes)
             {
@@ -169,6 +170,20 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
         }
 
+        public void DragMove(MouseDragArgs args)
+        {
+            var e = args.e as DragDeltaEventArgs;
+
+            var particle = (PhysicCircle)((FrameworkElement)args?.sender)?.DataContext;
+
+
+            if (particle.Left + e.HorizontalChange > 0 && particle.Left + e.HorizontalChange < Width - particle.Radius * 2)
+                particle.X += e.HorizontalChange;
+
+            if (particle.Top + e.VerticalChange > 0 && particle.Top + e.VerticalChange < Height - particle.Radius * 2)
+                particle.Y += e.VerticalChange;
+        }
+
         #endregion
 
 
@@ -185,7 +200,7 @@ namespace BrownianMoution.Sources.MVVM.Models
         {
             var verifiableCircle = _figureCollection[index];
 
-            if (verifiableCircle.X > _weidth - verifiableCircle.Radius)
+            if (verifiableCircle.X > _width - verifiableCircle.Radius)
             {
                 if (verifiableCircle.Speed.X > 0)
                 {
@@ -340,9 +355,9 @@ namespace BrownianMoution.Sources.MVVM.Models
             }
             else
             {
-                var isRightOut = circle.X > Weidth - circle.Radius;
+                var isRightOut = circle.X > Width - circle.Radius;
                 if (isRightOut)
-                    circle.X = Weidth - circle.Radius;
+                    circle.X = Width - circle.Radius;
             }
 
             var isTopOut = circle.Y < circle.Radius;
@@ -364,10 +379,10 @@ namespace BrownianMoution.Sources.MVVM.Models
         {
             foreach (var circle in _figureCollection)
             {
-                var isAfterBorder = circle.X > Weidth;
+                var isAfterBorder = circle.X > Width;
                 if (isAfterBorder)
                 {
-                    circle.X = Weidth - circle.Radius;
+                    circle.X = Width - circle.Radius;
                 }
 
             }
